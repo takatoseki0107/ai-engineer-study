@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - 'backend/**'
-      - 'backend_tmp/**'
       - '.github/workflows/ci-backend.yml'
 
 jobs:
@@ -16,7 +15,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend_tmp
+        working-directory: backend
 
     steps:
       - name: リポジトリをチェックアウト
@@ -34,7 +33,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('backend_tmp/**/*.gradle*') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('backend/**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
