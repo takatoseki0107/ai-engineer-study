@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: TaskManagement
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taskmanagement
+    username: taskuser
+    password: taskpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/init.sql
+      data-locations: classpath:db/data.sql
+
+server:
+  port: 8080
