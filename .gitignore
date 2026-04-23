@@ -1,0 +1,18 @@
+# 一時ファイル
+backend_tmp/
+backend_tmp.zip
+
+# Claude
+.claude/
+
+# Backend (Gradle)
+backend/.gradle/
+backend/build/
+backend/out/
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+
+# OS
+.DS_Store

@@ -75,6 +75,13 @@ TASKSテーブル1テーブル構成。詳細は [データベース設計書](d
 
 React + Spring Boot + PostgreSQL のフルスタック構成。詳細は [技術スタック](tech-stack.md) を参照。
 
+| カテゴリ | 技術 |
+|---------|------|
+| フロントエンド | React / TypeScript / Vite / dnd-kit / Tailwind CSS |
+| バックエンド | Java / Spring Boot / Gradle |
+| データベース | PostgreSQL |
+| 開発ツール | Git + GitHub |
+
 ---
 
 ## 非機能要件
