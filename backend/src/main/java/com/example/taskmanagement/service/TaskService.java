@@ -1,5 +1,6 @@
 package com.example.taskmanagement.service;
 
+import com.example.taskmanagement.domain.Status;
 import com.example.taskmanagement.domain.Task;
 import com.example.taskmanagement.exception.TaskNotFoundException;
 import com.example.taskmanagement.repository.TaskRepository;
@@ -24,5 +25,10 @@ public class TaskService {
     public Task findById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
+    }
+
+    public List<Task> findByStatus(String status) {
+        Status s = Status.valueOf(status);
+        return taskRepository.findByStatusOrderByPositionAsc(s);
     }
 }

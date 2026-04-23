@@ -29,4 +29,13 @@ public class TaskController {
     public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
         return ResponseEntity.ok(TaskResponse.from(taskService.findById(id)));
     }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<TaskResponse>> getTasksByStatus(@PathVariable String status) {
+        List<TaskResponse> tasks = taskService.findByStatus(status)
+            .stream()
+            .map(TaskResponse::from)
+            .toList();
+        return ResponseEntity.ok(tasks);
+    }
 }
