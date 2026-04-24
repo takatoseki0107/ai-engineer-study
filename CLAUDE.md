@@ -164,6 +164,16 @@ docker compose up -d
 
 ---
 
+## カスタムスキル
+
+`/` コマンドで呼び出せるスキルを以下に登録する。スキルの詳細は各 SKILL.md を参照。
+
+| スキル名 | 説明 | SKILL.md |
+|----------|------|----------|
+| `start-servers` | バックエンド（:8080）とフロントエンド（:5173）の開発サーバーを起動する。ポート競合時は競合プロセスを停止してからデフォルトポートで起動する。 | [.claude/skills/start-servers/SKILL.md](.claude/skills/start-servers/SKILL.md) |
+
+---
+
 ## やってはいけないこと（禁止事項）
 
 - `git push origin main` — 直接プッシュ禁止
