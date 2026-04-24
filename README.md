@@ -13,7 +13,7 @@
 |------|-----------|
 | Java (Eclipse Temurin) | 21.0.6 |
 | Spring Boot | 3.5.0 |
-| Gradle | 8.14 |
+| Gradle Wrapper | 8.14.4 |
 | Spring Data JPA | Spring Boot 管理 |
 | PostgreSQL ドライバ | Spring Boot 管理 |
 | Lombok | Spring Boot 管理 |
@@ -23,6 +23,7 @@
 | 技術 | バージョン |
 |------|-----------|
 | Node.js | 25.9.0 |
+| npm | 11.12.1 |
 | React | 19.2.5 |
 | TypeScript | 6.0.3 |
 | Vite | 8.0.10 |
@@ -33,7 +34,7 @@
 
 | 技術 | バージョン |
 |------|-----------|
-| PostgreSQL | 16 |
+| PostgreSQL | 16.13 |
 | Docker / Docker Compose | — |
 
 ---
