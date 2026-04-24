@@ -79,7 +79,28 @@ fix bug
 作業した
 ```
 
-### 5. Pull Request のルール
+### 5. ポート競合時の対処ルール
+
+サーバーを起動する際にポートが既に使用されている場合：
+
+- **必ず競合プロセスを停止してから、アプリ指定のデフォルトポートで起動する**
+- 別ポートで一時起動することは禁止（Vite proxy 等の設定が崩れて動作しない）
+
+| サーバー | ポート | 確認・停止コマンド |
+|----------|--------|-------------------|
+| バックエンド（Spring Boot） | 8080 | `lsof -ti:8080 \| xargs kill` |
+| フロントエンド（Vite） | 5173 | `lsof -ti:5173 \| xargs kill` |
+
+```bash
+# ポート競合が発生した場合の手順
+lsof -ti:8080 | xargs kill   # バックエンドポートを解放
+lsof -ti:5173 | xargs kill   # フロントエンドポートを解放
+# その後、通常通り起動する
+cd backend && ./gradlew bootRun
+cd frontend && npm run dev
+```
+
+### 6. Pull Request のルール
 
 - PR タイトル: コミットメッセージと同じ形式
 - PR 本文: 必ず `Closes #<Issue番号>` または `Fixes #<Issue番号>` を含める
@@ -140,6 +161,16 @@ cd backend
 ```bash
 docker compose up -d
 ```
+
+---
+
+## カスタムスキル
+
+`/` コマンドで呼び出せるスキルを以下に登録する。スキルの詳細は各 SKILL.md を参照。
+
+| スキル名 | 説明 | SKILL.md |
+|----------|------|----------|
+| `start-servers` | バックエンド（:8080）とフロントエンド（:5173）の開発サーバーを起動する。ポート競合時は競合プロセスを停止してからデフォルトポートで起動する。 | [.claude/skills/start-servers/SKILL.md](.claude/skills/start-servers/SKILL.md) |
 
 ---
 
