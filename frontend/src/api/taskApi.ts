@@ -32,3 +32,7 @@ export async function updateTaskPosition(id: number, position: number): Promise<
   const res = await api.patch<TaskResponse>(`/tasks/${id}/position`, { position })
   return res.data
 }
+
+export async function deleteTask(id: number): Promise<void> {
+  await api.delete(`/tasks/${id}`)
+}

@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Draggable } from '@hello-pangea/dnd'
 import type { TaskResponse } from '../types/task'
+import { deleteTask } from '../api/taskApi'
 import TaskDetailModal from './TaskDetailModal'
 
 interface Props {
   task: TaskResponse
   index: number
   onUpdated: (task: TaskResponse) => void
+  onDeleted: (id: number) => void
 }
 
 const PRIORITY_BADGE: Record<string, string> = {
@@ -21,11 +23,18 @@ const PRIORITY_LABEL: Record<string, string> = {
   low: '低',
 }
 
-export default function TaskCard({ task, index, onUpdated }: Props) {
+export default function TaskCard({ task, index, onUpdated, onDeleted }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
 
   const today = new Date().toISOString().slice(0, 10)
   const isOverdue = task.dueDate !== null && task.dueDate < today && task.status !== 'done'
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!window.confirm(`「${task.title}」を削除しますか？`)) return
+    await deleteTask(task.id)
+    onDeleted(task.id)
+  }
 
   return (
     <>
@@ -40,7 +49,16 @@ export default function TaskCard({ task, index, onUpdated }: Props) {
             }`}
             onClick={() => setModalOpen(true)}
           >
-            <p className="text-sm font-medium text-gray-800 leading-snug">{task.title}</p>
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-sm font-medium text-gray-800 leading-snug">{task.title}</p>
+              <button
+                onClick={handleDelete}
+                className="text-gray-300 hover:text-red-500 transition-colors flex-shrink-0 text-base leading-none"
+                title="削除"
+              >
+                🗑
+              </button>
+            </div>
 
             {task.description && (
               <p className="text-xs text-gray-500 truncate">{task.description}</p>
