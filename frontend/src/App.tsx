@@ -40,6 +40,10 @@ export default function App() {
     setTasks(prev => prev.map(t => t.id === updated.id ? updated : t))
   }
 
+  const handleReordered = (reordered: TaskResponse[]) => {
+    setTasks(reordered)
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -72,7 +76,7 @@ export default function App() {
           <p className="text-sm text-red-600">{error}</p>
         )}
 
-        {!loading && !error && <Board tasks={tasks} onUpdated={handleUpdated} />}
+        {!loading && !error && <Board tasks={tasks} onUpdated={handleUpdated} onReordered={handleReordered} />}
       </main>
     </div>
   )

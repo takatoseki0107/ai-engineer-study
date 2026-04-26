@@ -34,8 +34,12 @@ export default function TaskDetailModal({ task, onClose, onUpdated }: Props) {
       onUpdated(updated)
       onClose()
     } catch (err: unknown) {
-      const axiosErr = err as { response?: { data?: { error?: string } } }
-      setError(axiosErr.response?.data?.error ?? 'タスクの更新に失敗しました')
+      console.error('updateTask error:', err)
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } }
+      const msg = axiosErr.response?.data?.error
+        ?? axiosErr.response?.data?.message
+        ?? 'タスクの更新に失敗しました'
+      setError(msg)
     } finally {
       setSubmitting(false)
     }
