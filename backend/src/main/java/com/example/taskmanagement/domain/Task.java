@@ -64,4 +64,22 @@ public class Task {
     public int getPosition() { return position; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public void update(String title, String description, Priority priority, LocalDate dueDate) {
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
+        this.dueDate = dueDate;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updatePosition(int position) {
+        this.position = position;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

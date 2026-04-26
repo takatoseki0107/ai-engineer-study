@@ -1,7 +1,12 @@
+import { useState } from 'react'
+import { Draggable } from '@hello-pangea/dnd'
 import type { TaskResponse } from '../types/task'
+import TaskDetailModal from './TaskDetailModal'
 
 interface Props {
   task: TaskResponse
+  index: number
+  onUpdated: (task: TaskResponse) => void
 }
 
 const PRIORITY_BADGE: Record<string, string> = {
@@ -16,30 +21,54 @@ const PRIORITY_LABEL: Record<string, string> = {
   low: '低',
 }
 
-export default function TaskCard({ task }: Props) {
+export default function TaskCard({ task, index, onUpdated }: Props) {
+  const [modalOpen, setModalOpen] = useState(false)
+
   const today = new Date().toISOString().slice(0, 10)
   const isOverdue = task.dueDate !== null && task.dueDate < today && task.status !== 'done'
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 space-y-2">
-      <p className="text-sm font-medium text-gray-800 leading-snug">{task.title}</p>
+    <>
+      <Draggable draggableId={String(task.id)} index={index}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            className={`bg-white rounded-lg shadow-sm border border-gray-200 p-3 space-y-2 cursor-pointer hover:shadow-md transition-shadow ${
+              snapshot.isDragging ? 'shadow-lg rotate-1 opacity-90' : ''
+            }`}
+            onClick={() => setModalOpen(true)}
+          >
+            <p className="text-sm font-medium text-gray-800 leading-snug">{task.title}</p>
 
-      {task.description && (
-        <p className="text-xs text-gray-500 truncate">{task.description}</p>
+            {task.description && (
+              <p className="text-xs text-gray-500 truncate">{task.description}</p>
+            )}
+
+            <div className="flex items-center gap-2 flex-wrap">
+              {task.priority && (
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PRIORITY_BADGE[task.priority]}`}>
+                  {PRIORITY_LABEL[task.priority]}
+                </span>
+              )}
+              {task.dueDate && (
+                <span className={`text-xs ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
+                  {task.dueDate}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </Draggable>
+
+      {modalOpen && (
+        <TaskDetailModal
+          task={task}
+          onClose={() => setModalOpen(false)}
+          onUpdated={onUpdated}
+        />
       )}
-
-      <div className="flex items-center gap-2 flex-wrap">
-        {task.priority && (
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PRIORITY_BADGE[task.priority]}`}>
-            {PRIORITY_LABEL[task.priority]}
-          </span>
-        )}
-        {task.dueDate && (
-          <span className={`text-xs ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
-            {task.dueDate}
-          </span>
-        )}
-      </div>
-    </div>
+    </>
   )
 }
