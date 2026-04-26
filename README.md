@@ -63,16 +63,16 @@ TaskManagement/
 ├── backend/                  # Spring Boot アプリケーション
 │   └── src/main/java/com/example/taskmanagement/
 │       ├── config/           # CorsConfig
-│       ├── controller/       # TaskController (GET /api/tasks)
+│       ├── controller/       # TaskController (GET・POST /api/tasks)
 │       ├── domain/           # Task エンティティ、Priority / Status 列挙
-│       ├── dto/              # TaskResponse
+│       ├── dto/              # TaskResponse, TaskCreateRequest
 │       ├── exception/        # GlobalExceptionHandler, TaskNotFoundException
 │       ├── repository/       # TaskRepository (JPA)
 │       └── service/          # TaskService
 ├── frontend/                 # React + Vite アプリケーション
 │   └── src/
 │       ├── api/              # taskApi.ts (Axios)
-│       ├── components/       # Board, Column, TaskCard, FilterBar
+│       ├── components/       # Board, Column, TaskCard, FilterBar, TaskForm
 │       └── types/            # task.ts
 ├── docker-compose.yml        # PostgreSQL 16
 └── CLAUDE.md                 # Claude Code 作業ルール
@@ -122,6 +122,27 @@ npm run dev
 | GET | `/api/tasks` | 全タスク取得 |
 | GET | `/api/tasks/{id}` | ID 指定でタスク取得 |
 | GET | `/api/tasks/status/{status}` | ステータス絞り込みでタスク取得 |
+| POST | `/api/tasks` | タスク新規登録 |
+
+### POST /api/tasks リクエストボディ
+
+```json
+{
+  "title": "タスクタイトル",
+  "description": "詳細説明（省略可）",
+  "priority": "high",
+  "dueDate": "2026-05-01"
+}
+```
+
+| フィールド | 型 | 必須 | 説明 |
+|-----------|-----|------|------|
+| `title` | string | 必須 | 255 文字以内 |
+| `description` | string \| null | 任意 | — |
+| `priority` | string \| null | 任意 | `high` / `medium` / `low` |
+| `dueDate` | string \| null | 任意 | `YYYY-MM-DD` 形式 |
+
+`status` は `todo` 固定、`position` はサーバー側で自動採番。成功時は **201 Created** + `Location` ヘッダーを返す。
 
 ### ステータス値
 
@@ -130,6 +151,14 @@ npm run dev
 | `todo` | 未着手 |
 | `in_progress` | 進行中 |
 | `done` | 完了 |
+
+### 優先度値
+
+| 値 | 意味 |
+|----|------|
+| `high` | 高 |
+| `medium` | 中 |
+| `low` | 低 |
 
 ### タスクレスポンス例
 
@@ -141,7 +170,9 @@ npm run dev
   "priority": "high",
   "status": "done",
   "dueDate": "2026-04-01",
-  "position": 1
+  "position": 1,
+  "createdAt": "2026-04-23T18:11:38.348849",
+  "updatedAt": "2026-04-23T18:11:38.348849"
 }
 ```
 
