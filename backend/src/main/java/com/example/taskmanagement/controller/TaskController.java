@@ -1,9 +1,14 @@
 package com.example.taskmanagement.controller;
 
+import com.example.taskmanagement.domain.Task;
+import com.example.taskmanagement.dto.TaskCreateRequest;
 import com.example.taskmanagement.dto.TaskResponse;
 import com.example.taskmanagement.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -37,5 +42,14 @@ public class TaskController {
             .map(TaskResponse::from)
             .toList();
         return ResponseEntity.ok(tasks);
+    }
+
+    @PostMapping
+    public ResponseEntity<TaskResponse> createTask(
+            @RequestBody @Valid TaskCreateRequest req,
+            UriComponentsBuilder ucb) {
+        Task created = taskService.create(req);
+        URI location = ucb.path("/api/tasks/{id}").buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(location).body(TaskResponse.from(created));
     }
 }

@@ -12,3 +12,10 @@ export interface TaskResponse {
   createdAt: string
   updatedAt: string
 }
+
+export interface TaskCreateRequest {
+  title: string
+  description: string | null
+  priority: TaskPriority | null
+  dueDate: string | null
+}
