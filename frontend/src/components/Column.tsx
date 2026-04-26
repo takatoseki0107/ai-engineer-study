@@ -6,9 +6,10 @@ interface Props {
   status: TaskStatus
   tasks: TaskResponse[]
   colorClass: string
+  onUpdated: (task: TaskResponse) => void
 }
 
-export default function Column({ label, tasks, colorClass }: Props) {
+export default function Column({ label, tasks, colorClass, onUpdated }: Props) {
   return (
     <div className="flex-1 min-w-0 bg-gray-50 rounded-xl p-3 flex flex-col gap-2">
       <div className={`flex items-center gap-2 pb-2 border-b border-gray-200`}>
@@ -20,7 +21,7 @@ export default function Column({ label, tasks, colorClass }: Props) {
       </div>
       <div className="flex flex-col gap-2">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard key={task.id} task={task} onUpdated={onUpdated} />
         ))}
         {tasks.length === 0 && (
           <p className="text-xs text-gray-400 text-center py-4">タスクなし</p>

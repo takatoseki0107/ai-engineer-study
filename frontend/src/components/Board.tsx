@@ -3,6 +3,7 @@ import Column from './Column'
 
 interface Props {
   tasks: TaskResponse[]
+  onUpdated: (task: TaskResponse) => void
 }
 
 const COLUMNS: { status: TaskStatus; label: string; colorClass: string }[] = [
@@ -11,7 +12,7 @@ const COLUMNS: { status: TaskStatus; label: string; colorClass: string }[] = [
   { status: 'done', label: '完了', colorClass: 'bg-green-400' },
 ]
 
-export default function Board({ tasks }: Props) {
+export default function Board({ tasks, onUpdated }: Props) {
   return (
     <div className="flex gap-4 items-start">
       {COLUMNS.map((col) => (
@@ -21,6 +22,7 @@ export default function Board({ tasks }: Props) {
           status={col.status}
           colorClass={col.colorClass}
           tasks={tasks.filter((t) => t.status === col.status)}
+          onUpdated={onUpdated}
         />
       ))}
     </div>

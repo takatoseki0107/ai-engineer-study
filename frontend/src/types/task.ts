@@ -19,3 +19,10 @@ export interface TaskCreateRequest {
   priority: TaskPriority | null
   dueDate: string | null
 }
+
+export interface TaskUpdateRequest {
+  title: string
+  description: string | null
+  priority: TaskPriority | null
+  dueDate: string | null
+}

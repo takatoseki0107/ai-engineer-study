@@ -2,6 +2,9 @@ package com.example.taskmanagement.controller;
 
 import com.example.taskmanagement.domain.Task;
 import com.example.taskmanagement.dto.TaskCreateRequest;
+import com.example.taskmanagement.dto.TaskPositionUpdateRequest;
+import com.example.taskmanagement.dto.TaskStatusUpdateRequest;
+import com.example.taskmanagement.dto.TaskUpdateRequest;
 import com.example.taskmanagement.dto.TaskResponse;
 import com.example.taskmanagement.service.TaskService;
 import jakarta.validation.Valid;
@@ -51,5 +54,26 @@ public class TaskController {
         Task created = taskService.create(req);
         URI location = ucb.path("/api/tasks/{id}").buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(location).body(TaskResponse.from(created));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponse> updateTask(
+            @PathVariable Long id,
+            @RequestBody @Valid TaskUpdateRequest req) {
+        return ResponseEntity.ok(TaskResponse.from(taskService.update(id, req)));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TaskResponse> updateTaskStatus(
+            @PathVariable Long id,
+            @RequestBody @Valid TaskStatusUpdateRequest req) {
+        return ResponseEntity.ok(TaskResponse.from(taskService.updateStatus(id, req.status())));
+    }
+
+    @PatchMapping("/{id}/position")
+    public ResponseEntity<TaskResponse> updateTaskPosition(
+            @PathVariable Long id,
+            @RequestBody TaskPositionUpdateRequest req) {
+        return ResponseEntity.ok(TaskResponse.from(taskService.updatePosition(id, req.position())));
     }
 }
