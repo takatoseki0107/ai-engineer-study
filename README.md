@@ -15,6 +15,8 @@
 | Spring Boot | 3.5.0 |
 | Gradle Wrapper | 8.14.4 |
 | Spring Data JPA | Spring Boot 管理 |
+| Spring Security | Spring Boot 管理 |
+| jjwt | 0.12.x |
 | PostgreSQL ドライバ | Spring Boot 管理 |
 
 ### フロントエンド
@@ -29,6 +31,7 @@
 | Tailwind CSS | 4.2.4 |
 | Axios | 1.15.2 |
 | @hello-pangea/dnd | 18.0.1 |
+| react-router-dom | 7.x |
 
 ### インフラ
 
@@ -62,17 +65,22 @@ PostgreSQL (:5432)
 TaskManagement/
 ├── backend/                  # Spring Boot アプリケーション
 │   └── src/main/java/com/example/taskmanagement/
-│       ├── config/           # CorsConfig
-│       ├── controller/       # TaskController
-│       ├── domain/           # Task エンティティ、Priority / Status 列挙
-│       ├── dto/              # TaskResponse, TaskCreateRequest, TaskUpdateRequest 等
+│       ├── config/           # SecurityConfig
+│       ├── controller/       # TaskController, AuthController
+│       ├── domain/           # Task / User エンティティ、Priority / Status 列挙
+│       ├── dto/              # TaskResponse, TaskCreateRequest, TaskUpdateRequest,
+│       │                     # AuthRequest, AuthResponse 等
 │       ├── exception/        # GlobalExceptionHandler, TaskNotFoundException
-│       ├── repository/       # TaskRepository (JPA)
-│       └── service/          # TaskService
+│       ├── repository/       # TaskRepository, UserRepository (JPA)
+│       ├── security/         # JwtUtil, JwtAuthenticationFilter
+│       └── service/          # TaskService, UserService
 ├── frontend/                 # React + Vite アプリケーション
 │   └── src/
-│       ├── api/              # taskApi.ts (Axios)
-│       ├── components/       # Board, Column, TaskCard, TaskDetailModal, FilterBar, TaskForm
+│       ├── api/              # client.ts (Axios), taskApi.ts
+│       ├── components/       # Board, Column, TaskCard, TaskDetailModal, FilterBar, TaskForm,
+│       │                     # ProtectedRoute
+│       ├── contexts/         # AuthContext.tsx
+│       ├── pages/            # LoginPage, RegisterPage
 │       └── types/            # task.ts
 ├── docker-compose.yml        # PostgreSQL 16
 └── CLAUDE.md                 # Claude Code 作業ルール
@@ -82,6 +90,7 @@ TaskManagement/
 
 ## 機能一覧
 
+- ユーザー登録・ログイン（JWT 認証）
 - タスク一覧をカンバンボード（Todo / 進行中 / 完了）形式で表示
 - ステータスでの絞り込みフィルター
 - タスク新規登録（タイトル・説明・優先度・期日）
@@ -125,9 +134,37 @@ npm run dev
 
 `http://localhost:5173` で起動。
 
+### 4. ユーザー登録
+
+ブラウザで `http://localhost:5173` にアクセスし、登録ページからユーザーを作成する。  
+または curl で直接登録することもできる:
+
+```bash
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"yourname","password":"yourpassword"}'
+```
+
 ---
 
 ## API 仕様
+
+### 認証エンドポイント（認証不要）
+
+| メソッド | パス | 説明 |
+|----------|------|------|
+| POST | `/api/auth/register` | ユーザー登録 |
+| POST | `/api/auth/login` | ログイン（JWT トークン取得） |
+
+#### POST /api/auth/register・POST /api/auth/login リクエストボディ
+
+```json
+{ "username": "yourname", "password": "yourpassword" }
+```
+
+成功時は **200 OK** + `{ "token": "<JWT>", "username": "<username>" }` を返す。
+
+### タスクエンドポイント（要認証: `Authorization: Bearer <token>`）
 
 | メソッド | パス | 説明 |
 |----------|------|------|

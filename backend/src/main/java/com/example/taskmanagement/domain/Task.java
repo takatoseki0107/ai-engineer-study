@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +20,10 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private String title;
@@ -47,9 +53,10 @@ public class Task {
 
     protected Task() {}
 
-    public static Task create(String title, String description, Priority priority,
+    public static Task create(User user, String title, String description, Priority priority,
                               LocalDate dueDate, int position) {
         Task t = new Task();
+        t.user = user;
         t.title = title;
         t.description = description;
         t.priority = priority;
@@ -63,6 +70,7 @@ public class Task {
     }
 
     public Long getId() { return id; }
+    public User getUser() { return user; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
     public Priority getPriority() { return priority; }

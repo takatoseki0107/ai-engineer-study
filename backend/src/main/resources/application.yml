@@ -19,7 +19,10 @@ spring:
     init:
       mode: always
       schema-locations: classpath:db/init.sql
-      data-locations: classpath:db/data.sql
 
 server:
   port: ${SERVER_PORT:8080}
+
+jwt:
+  secret: ${JWT_SECRET:taskmanagement-jwt-secret-key-must-be-at-least-256-bits-long}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}

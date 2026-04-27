@@ -13,6 +13,15 @@
 
 ## エンドポイント一覧
 
+### 認証エンドポイント（認証不要）
+
+| メソッド | パス | 説明 |
+|----------|------|------|
+| POST | `/api/auth/register` | ユーザー登録 |
+| POST | `/api/auth/login` | ログイン（JWT トークン取得） |
+
+### タスクエンドポイント（要認証）
+
 | メソッド | パス | 説明 |
 |----------|------|------|
 | GET | `/api/tasks` | 全タスク取得 |
@@ -34,6 +43,16 @@
 Content-Type: application/json
 ```
 
+### 認証ヘッダー
+
+タスクエンドポイントへのすべてのリクエストに以下のヘッダーが必要。
+
+```
+Authorization: Bearer <JWT トークン>
+```
+
+トークンが未提供または無効な場合は **401 Unauthorized** を返す。
+
 ### エラーレスポンス形式
 
 すべてのエラーレスポンスは以下の JSON 形式で返す。
@@ -49,6 +68,7 @@ Content-Type: application/json
 | ステータス | 発生条件 |
 |-----------|---------|
 | 400 Bad Request | リクエストボディのバリデーション違反、不正な列挙値 |
+| 401 Unauthorized | JWT トークン未提供・無効 |
 | 404 Not Found | 指定した ID のタスクが存在しない |
 
 ---
@@ -104,6 +124,71 @@ API レスポンスで返されるタスクの共通フォーマット。
 ---
 
 ## エンドポイント詳細
+
+---
+
+### POST /api/auth/register
+
+新規ユーザーを登録し、JWT トークンを返す。
+
+#### リクエストボディ
+
+```json
+{
+  "username": "yourname",
+  "password": "yourpassword"
+}
+```
+
+| フィールド | 型 | 必須 | 制約 |
+|-----------|-----|------|------|
+| `username` | string | 必須 | 空文字不可・50文字以内・一意 |
+| `password` | string | 必須 | 空文字不可 |
+
+#### レスポンス
+
+**200 OK**
+
+```json
+{
+  "token": "eyJhbGciOiJIUzM4NCJ9...",
+  "username": "yourname"
+}
+```
+
+**400 Bad Request** — バリデーション違反またはユーザー名重複
+
+```json
+{ "error": "すでに使用されているユーザー名です: yourname" }
+```
+
+---
+
+### POST /api/auth/login
+
+認証を行い、JWT トークンを返す。
+
+#### リクエストボディ
+
+```json
+{
+  "username": "yourname",
+  "password": "yourpassword"
+}
+```
+
+#### レスポンス
+
+**200 OK**
+
+```json
+{
+  "token": "eyJhbGciOiJIUzM4NCJ9...",
+  "username": "yourname"
+}
+```
+
+**401 Unauthorized** — ユーザー名またはパスワードが不正
 
 ---
 
@@ -417,6 +502,8 @@ Location: /api/tasks/{id}
 
 | フロントエンド操作 | 呼び出す API |
 |-----------------|------------|
+| ユーザー登録 | `POST /api/auth/register` |
+| ログイン | `POST /api/auth/login` |
 | 画面初期表示・フィルター変更 | `GET /api/tasks` または `GET /api/tasks/status/{status}` |
 | タスク新規登録 | `POST /api/tasks` |
 | タスク編集モーダル「保存」 | `PUT /api/tasks/{id}` |

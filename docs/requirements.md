@@ -69,7 +69,29 @@
 
 ---
 
-### 2.2 タスクカード表示仕様
+### 2.2 認証
+
+#### FR-08 ユーザー登録
+
+- ユーザー名とパスワードを入力して新規アカウントを作成できる
+- ユーザー名は一意であり、重複登録はエラーになる
+- パスワードは BCrypt でハッシュ化して保存する
+- 登録成功後は JWT トークンを発行してログイン状態にする
+
+#### FR-09 ログイン
+
+- 登録済みのユーザー名・パスワードで認証できる
+- 認証成功時は JWT トークンを返し、フロントエンドは `localStorage` に保存する
+- 以降のリクエストには `Authorization: Bearer <token>` ヘッダーを付与する
+
+#### FR-10 ログアウト
+
+- ヘッダーのログアウトボタンを押すと `localStorage` のトークンを削除してログイン画面へ遷移する
+- ログアウト後はタスク管理画面にアクセスできない（`ProtectedRoute` でリダイレクト）
+
+---
+
+### 2.3 タスクカード表示仕様
 
 各タスクカードには以下の情報を表示する。
 
@@ -102,6 +124,8 @@
 | Java (Eclipse Temurin) | 21 |
 | Spring Boot | 3.5.0 |
 | Spring Data JPA | Spring Boot 管理 |
+| Spring Security | Spring Boot 管理 |
+| jjwt | 0.12.x |
 | PostgreSQL ドライバ | Spring Boot 管理 |
 | Gradle Wrapper | 8.14.4 |
 
@@ -116,6 +140,7 @@
 | Tailwind CSS | 4.2.4 |
 | Axios | 1.15.2 |
 | @hello-pangea/dnd | 18.0.1 |
+| react-router-dom | 7.x |
 
 #### インフラ
 
@@ -146,8 +171,9 @@ PostgreSQL (:5432)
 
 ### 3.3 データ永続化
 
-- タスクデータは PostgreSQL に永続化する
-- アプリケーション起動時に `db/init.sql` でスキーマを、`db/data.sql` でサンプルデータを投入する（`IF NOT EXISTS` によるべき等性確保）
+- タスクデータ・ユーザーデータは PostgreSQL に永続化する
+- アプリケーション起動時に `db/init.sql` でスキーマを投入する（`IF NOT EXISTS` によるべき等性確保）
+- `db/data.sql` は認証導入によりサンプルデータを削除済みで、現在は無効化されている
 - JPA による ORM でデータアクセスを行う
 
 ---
@@ -160,6 +186,7 @@ PostgreSQL (:5432)
 | バックエンド | タイトル | `@NotBlank`・`@Size(max=255)` |
 | バックエンド | ステータス | `@NotBlank` |
 | バックエンド | ポジション | `@Min(1)` |
+| バックエンド | ユーザー名・パスワード | `@NotBlank` |
 | DB | priority | CHECK 制約（`high` / `medium` / `low`） |
 | DB | status | CHECK 制約（`todo` / `in_progress` / `done`） |
 
@@ -172,6 +199,9 @@ PostgreSQL (:5432)
 | タスクが存在しない | 404 Not Found | `{ "error": "メッセージ" }` |
 | バリデーション違反 | 400 Bad Request | `{ "error": "メッセージ" }` |
 | 不正な優先度・ステータス値 | 400 Bad Request | `{ "error": "メッセージ" }` |
+| ユーザー名重複 | 400 Bad Request | `{ "error": "メッセージ" }` |
+| 認証失敗（ユーザー名・パスワード不一致） | 401 Unauthorized | — |
+| JWT トークン未提供・無効 | 401 Unauthorized | — |
 
 フロントエンドは API エラー発生時に UI 上にエラーメッセージを表示する。  
 削除失敗時のみ `alert()` でユーザーに通知する。
@@ -201,11 +231,21 @@ PostgreSQL (:5432)
 
 ## 4. データモデル
 
+### users テーブル
+
+| カラム | 型 | 制約 | 説明 |
+|--------|-----|------|------|
+| id | BIGSERIAL | PK, AUTO INCREMENT | ユーザー識別子 |
+| username | VARCHAR(50) | NOT NULL, UNIQUE | ユーザー名 |
+| password | VARCHAR(255) | NOT NULL | BCrypt ハッシュ済みパスワード |
+| created_at | TIMESTAMP | NOT NULL | 作成日時 |
+
 ### tasks テーブル
 
 | カラム | 型 | 制約 | 説明 |
 |--------|-----|------|------|
 | id | BIGINT | PK, AUTO INCREMENT | タスク識別子 |
+| user_id | BIGINT | NOT NULL, FK → users(id) | 所有ユーザー |
 | title | VARCHAR(255) | NOT NULL | タスクタイトル |
 | description | TEXT | NULL 可 | 詳細説明 |
 | priority | VARCHAR(10) | NULL 可, CHECK | `high` / `medium` / `low` |
@@ -219,6 +259,7 @@ PostgreSQL (:5432)
 
 | インデックス | カラム | 用途 |
 |------------|--------|------|
+| idx_tasks_user_id | user_id | ユーザー絞り込み |
 | idx_tasks_status | status | ステータス絞り込み |
 | idx_tasks_status_position | (status, position) | カラム内ソート |
 | idx_tasks_due_date | due_date | 期日検索 |

@@ -131,11 +131,39 @@ cd frontend && npm run dev
 ```
 TaskManagement/
 ├── frontend/         # React + TypeScript + Vite
+│   └── src/
+│       ├── api/          # client.ts (Axios インスタンス), taskApi.ts
+│       ├── components/   # Board, Column, TaskCard, TaskDetailModal, FilterBar,
+│       │                 # TaskForm, ProtectedRoute
+│       ├── contexts/     # AuthContext.tsx（JWT トークン管理・axios ヘッダー設定）
+│       ├── pages/        # LoginPage, RegisterPage
+│       └── types/        # task.ts
 ├── backend/          # Java 21 + Spring Boot 3 + Gradle
+│   └── src/main/java/com/example/taskmanagement/
+│       ├── config/       # SecurityConfig（Spring Security・CORS・JWT フィルター登録）
+│       ├── controller/   # TaskController, AuthController（/api/auth/register, /api/auth/login）
+│       ├── domain/       # Task / User エンティティ
+│       ├── dto/          # リクエスト・レスポンス DTO
+│       ├── exception/    # GlobalExceptionHandler, TaskNotFoundException
+│       ├── repository/   # TaskRepository, UserRepository (JPA)
+│       ├── security/     # JwtUtil（トークン生成・検証）, JwtAuthenticationFilter
+│       └── service/      # TaskService, UserService（UserDetailsService 実装）
 ├── docs/             # 要件定義・設計書
 ├── docker-compose.yml   # PostgreSQL 16
 └── CLAUDE.md
 ```
+
+### 認証の仕組み
+
+- `POST /api/auth/register` と `POST /api/auth/login` は認証不要（`SecurityConfig` で `permitAll()`）
+- それ以外の `/api/**` エンドポイントはすべて `Authorization: Bearer <JWT>` が必要
+- フロントエンドは `AuthContext.tsx` で localStorage のトークンを管理し、初期化時に即座に `axios.defaults.headers.common['Authorization']` を設定する（リロード後の 401 を防ぐため）
+
+### data.sql について
+
+`backend/src/main/resources/db/data.sql` はコメントのみで実際の SQL は含まれていない。  
+`application.yml` の `spring.sql.init.data-locations` は現在**無効化済み**（設定から削除）。  
+サンプルデータが必要な場合はユーザー登録後にアプリ経由でタスクを作成すること。
 
 ### フロントエンド開発コマンド
 
