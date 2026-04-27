@@ -44,7 +44,7 @@ export default function TaskCard({ task, index, onUpdated, onDeleted }: Props) {
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            className={`bg-white rounded-lg shadow-sm border border-gray-200 p-3 space-y-2 cursor-pointer hover:shadow-md transition-shadow ${
+            className={`group bg-white rounded-lg shadow-sm border border-gray-200 p-3 space-y-2 cursor-pointer hover:shadow-md transition-shadow ${
               snapshot.isDragging ? 'shadow-lg rotate-1 opacity-90' : ''
             }`}
             onClick={() => setModalOpen(true)}
@@ -53,7 +53,7 @@ export default function TaskCard({ task, index, onUpdated, onDeleted }: Props) {
               <p className="text-sm font-medium text-gray-800 leading-snug">{task.title}</p>
               <button
                 onClick={handleDelete}
-                className="text-gray-300 hover:text-red-500 transition-colors flex-shrink-0 text-base leading-none"
+                className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 transition-opacity flex-shrink-0 text-base leading-none"
                 title="削除"
               >
                 🗑
