@@ -89,4 +89,10 @@ public class TaskService {
         task.updatePosition(position);
         return taskRepository.save(task);
     }
+
+    @Transactional
+    public void delete(Long id) {
+        findById(id);
+        taskRepository.deleteById(id);
+    }
 }

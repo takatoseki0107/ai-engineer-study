@@ -8,9 +8,10 @@ interface Props {
   tasks: TaskResponse[]
   colorClass: string
   onUpdated: (task: TaskResponse) => void
+  onDeleted: (id: number) => void
 }
 
-export default function Column({ label, status, tasks, colorClass, onUpdated }: Props) {
+export default function Column({ label, status, tasks, colorClass, onUpdated, onDeleted }: Props) {
   return (
     <div className="flex-1 min-w-0 bg-gray-50 rounded-xl p-3 flex flex-col gap-2">
       <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
@@ -30,7 +31,7 @@ export default function Column({ label, status, tasks, colorClass, onUpdated }: 
             }`}
           >
             {tasks.map((task, index) => (
-              <TaskCard key={task.id} task={task} index={index} onUpdated={onUpdated} />
+              <TaskCard key={task.id} task={task} index={index} onUpdated={onUpdated} onDeleted={onDeleted} />
             ))}
             {provided.placeholder}
             {tasks.length === 0 && !snapshot.isDraggingOver && (

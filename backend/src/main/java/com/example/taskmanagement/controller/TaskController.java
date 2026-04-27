@@ -76,4 +76,10 @@ public class TaskController {
             @RequestBody TaskPositionUpdateRequest req) {
         return ResponseEntity.ok(TaskResponse.from(taskService.updatePosition(id, req.position())));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

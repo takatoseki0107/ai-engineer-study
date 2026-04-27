@@ -16,7 +16,6 @@
 | Gradle Wrapper | 8.14.4 |
 | Spring Data JPA | Spring Boot 管理 |
 | PostgreSQL ドライバ | Spring Boot 管理 |
-| Lombok | Spring Boot 管理 |
 
 ### フロントエンド
 
@@ -29,6 +28,7 @@
 | Vite | 8.0.10 |
 | Tailwind CSS | 4.2.4 |
 | Axios | 1.15.2 |
+| @hello-pangea/dnd | 17.0.0 |
 
 ### インフラ
 
@@ -63,20 +63,32 @@ TaskManagement/
 ├── backend/                  # Spring Boot アプリケーション
 │   └── src/main/java/com/example/taskmanagement/
 │       ├── config/           # CorsConfig
-│       ├── controller/       # TaskController (GET・POST /api/tasks)
+│       ├── controller/       # TaskController
 │       ├── domain/           # Task エンティティ、Priority / Status 列挙
-│       ├── dto/              # TaskResponse, TaskCreateRequest
+│       ├── dto/              # TaskResponse, TaskCreateRequest, TaskUpdateRequest 等
 │       ├── exception/        # GlobalExceptionHandler, TaskNotFoundException
 │       ├── repository/       # TaskRepository (JPA)
 │       └── service/          # TaskService
 ├── frontend/                 # React + Vite アプリケーション
 │   └── src/
 │       ├── api/              # taskApi.ts (Axios)
-│       ├── components/       # Board, Column, TaskCard, FilterBar, TaskForm
+│       ├── components/       # Board, Column, TaskCard, TaskDetailModal, FilterBar, TaskForm
 │       └── types/            # task.ts
 ├── docker-compose.yml        # PostgreSQL 16
 └── CLAUDE.md                 # Claude Code 作業ルール
 ```
+
+---
+
+## 機能一覧
+
+- タスク一覧をカンバンボード（Todo / 進行中 / 完了）形式で表示
+- ステータスでの絞り込みフィルター
+- タスク新規登録（タイトル・説明・優先度・期日）
+- タスク編集（カードクリックでモーダルを開き、内容を更新）
+- ドラッグ&ドロップによるタスクのステータス変更・並び替え
+- タスク削除（確認ダイアログあり）
+- 期日超過の赤色ハイライト表示
 
 ---
 
@@ -119,12 +131,16 @@ npm run dev
 
 | メソッド | パス | 説明 |
 |----------|------|------|
-| GET | `/api/tasks` | 全タスク取得 |
+| GET | `/api/tasks` | 全タスク取得（position 昇順） |
 | GET | `/api/tasks/{id}` | ID 指定でタスク取得 |
 | GET | `/api/tasks/status/{status}` | ステータス絞り込みでタスク取得 |
 | POST | `/api/tasks` | タスク新規登録 |
+| PUT | `/api/tasks/{id}` | タスク内容更新 |
+| PATCH | `/api/tasks/{id}/status` | ステータス変更 |
+| PATCH | `/api/tasks/{id}/position` | 並び順変更 |
+| DELETE | `/api/tasks/{id}` | タスク削除 |
 
-### POST /api/tasks リクエストボディ
+### POST /api/tasks・PUT /api/tasks/{id} リクエストボディ
 
 ```json
 {
@@ -142,7 +158,24 @@ npm run dev
 | `priority` | string \| null | 任意 | `high` / `medium` / `low` |
 | `dueDate` | string \| null | 任意 | `YYYY-MM-DD` 形式 |
 
-`status` は `todo` 固定、`position` はサーバー側で自動採番。成功時は **201 Created** + `Location` ヘッダーを返す。
+POST 成功時は **201 Created** + `Location` ヘッダーを返す。  
+PUT 成功時は **200 OK** を返す。
+
+### PATCH /api/tasks/{id}/status リクエストボディ
+
+```json
+{ "status": "in_progress" }
+```
+
+### PATCH /api/tasks/{id}/position リクエストボディ
+
+```json
+{ "position": 2 }
+```
+
+### DELETE /api/tasks/{id}
+
+成功時は **204 No Content** を返す。存在しない ID の場合は **404 Not Found**。
 
 ### ステータス値
 

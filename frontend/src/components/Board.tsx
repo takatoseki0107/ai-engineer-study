@@ -7,6 +7,7 @@ interface Props {
   tasks: TaskResponse[]
   onUpdated: (task: TaskResponse) => void
   onReordered: (tasks: TaskResponse[]) => void
+  onDeleted: (id: number) => void
 }
 
 const COLUMNS: { status: TaskStatus; label: string; colorClass: string }[] = [
@@ -15,7 +16,7 @@ const COLUMNS: { status: TaskStatus; label: string; colorClass: string }[] = [
   { status: 'done', label: '完了', colorClass: 'bg-green-400' },
 ]
 
-export default function Board({ tasks, onUpdated, onReordered }: Props) {
+export default function Board({ tasks, onUpdated, onReordered, onDeleted }: Props) {
   const handleDragEnd = async (result: DropResult) => {
     const { source, destination, draggableId } = result
     if (!destination) return
@@ -81,6 +82,7 @@ export default function Board({ tasks, onUpdated, onReordered }: Props) {
               .filter((t) => t.status === col.status)
               .sort((a, b) => a.position - b.position)}
             onUpdated={onUpdated}
+            onDeleted={onDeleted}
           />
         ))}
       </div>
