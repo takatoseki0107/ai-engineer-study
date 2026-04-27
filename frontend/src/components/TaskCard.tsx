@@ -32,8 +32,12 @@ export default function TaskCard({ task, index, onUpdated, onDeleted }: Props) {
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!window.confirm(`「${task.title}」を削除しますか？`)) return
-    await deleteTask(task.id)
-    onDeleted(task.id)
+    try {
+      await deleteTask(task.id)
+      onDeleted(task.id)
+    } catch {
+      alert('タスクの削除に失敗しました')
+    }
   }
 
   return (

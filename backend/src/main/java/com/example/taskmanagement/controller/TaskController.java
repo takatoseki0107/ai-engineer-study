@@ -73,7 +73,7 @@ public class TaskController {
     @PatchMapping("/{id}/position")
     public ResponseEntity<TaskResponse> updateTaskPosition(
             @PathVariable Long id,
-            @RequestBody TaskPositionUpdateRequest req) {
+            @RequestBody @Valid TaskPositionUpdateRequest req) {
         return ResponseEntity.ok(TaskResponse.from(taskService.updatePosition(id, req.position())));
     }
 

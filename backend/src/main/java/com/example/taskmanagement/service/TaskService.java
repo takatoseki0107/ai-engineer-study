@@ -33,7 +33,12 @@ public class TaskService {
     }
 
     public List<Task> findByStatus(String status) {
-        Status s = Status.valueOf(status);
+        Status s;
+        try {
+            s = Status.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("無効なステータスです: " + status);
+        }
         return taskRepository.findByStatusOrderByPositionAsc(s);
     }
 
