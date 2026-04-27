@@ -4,8 +4,6 @@ import com.example.taskmanagement.domain.Priority;
 import com.example.taskmanagement.domain.Status;
 import com.example.taskmanagement.domain.Task;
 import com.example.taskmanagement.dto.TaskCreateRequest;
-import com.example.taskmanagement.dto.TaskPositionUpdateRequest;
-import com.example.taskmanagement.dto.TaskStatusUpdateRequest;
 import com.example.taskmanagement.dto.TaskUpdateRequest;
 import com.example.taskmanagement.exception.TaskNotFoundException;
 import com.example.taskmanagement.repository.TaskRepository;

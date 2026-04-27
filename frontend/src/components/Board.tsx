@@ -18,6 +18,7 @@ const COLUMNS: { status: TaskStatus; label: string; colorClass: string }[] = [
 
 export default function Board({ tasks, onUpdated, onReordered, onDeleted }: Props) {
   const handleDragEnd = async (result: DropResult) => {
+    const snapshot = [...tasks]
     const { source, destination, draggableId } = result
     if (!destination) return
     if (source.droppableId === destination.droppableId && source.index === destination.index) return
@@ -65,7 +66,7 @@ export default function Board({ tasks, onUpdated, onReordered, onDeleted }: Prop
       }
       await updateTaskPosition(taskId, destination.index + 1)
     } catch {
-      // 失敗時は再フェッチで整合性を回復させる（App側に委ねる）
+      onReordered(snapshot)
     }
   }
 

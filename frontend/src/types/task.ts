@@ -1,5 +1,6 @@
 export type TaskStatus = 'todo' | 'in_progress' | 'done'
 export type TaskPriority = 'high' | 'medium' | 'low'
+export type TaskFilter = TaskStatus | 'all'
 
 export interface TaskResponse {
   id: number
