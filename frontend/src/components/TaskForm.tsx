@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { TaskPriority, TaskCreateRequest } from '../types/task'
-import { createTask } from '../api/taskApi'
+import { createTask, getApiErrorMessage } from '../api/taskApi'
 
 interface Props {
   onClose: () => void
@@ -15,7 +15,7 @@ export default function TaskForm({ onClose, onCreated }: Props) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!title.trim()) {
       setError('タイトルは必須です')
@@ -33,10 +33,7 @@ export default function TaskForm({ onClose, onCreated }: Props) {
       await createTask(req)
       onCreated()
     } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { error?: string } } })?.response?.data?.error
-        ?? 'タスクの作成に失敗しました'
-      setError(message)
+      setError(getApiErrorMessage(err, 'タスクの作成に失敗しました'))
     } finally {
       setSubmitting(false)
     }

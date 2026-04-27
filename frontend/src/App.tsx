@@ -1,15 +1,13 @@
 import { useEffect, useState, useCallback } from 'react'
-import type { TaskResponse, TaskStatus } from './types/task'
+import type { TaskResponse, TaskFilter } from './types/task'
 import { fetchAllTasks, fetchTasksByStatus } from './api/taskApi'
 import FilterBar from './components/FilterBar'
 import Board from './components/Board'
 import TaskForm from './components/TaskForm'
 
-type Filter = TaskStatus | 'all'
-
 export default function App() {
   const [tasks, setTasks] = useState<TaskResponse[]>([])
-  const [selectedStatus, setSelectedStatus] = useState<Filter>('all')
+  const [selectedStatus, setSelectedStatus] = useState<TaskFilter>('all')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
@@ -17,19 +15,19 @@ export default function App() {
   const loadTasks = useCallback(() => {
     setLoading(true)
     setError(null)
-
     const request =
       selectedStatus === 'all'
         ? fetchAllTasks()
         : fetchTasksByStatus(selectedStatus)
-
     request
       .then(setTasks)
       .catch(() => setError('タスクの取得に失敗しました'))
       .finally(() => setLoading(false))
   }, [selectedStatus])
 
-  useEffect(() => { loadTasks() }, [loadTasks])
+  useEffect(() => {
+    loadTasks()
+  }, [loadTasks])
 
   const handleCreated = () => {
     setShowForm(false)

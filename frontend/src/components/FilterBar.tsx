@@ -1,13 +1,11 @@
-import type { TaskStatus } from '../types/task'
-
-type Filter = TaskStatus | 'all'
+import type { TaskFilter } from '../types/task'
 
 interface Props {
-  selected: Filter
-  onChange: (status: Filter) => void
+  selected: TaskFilter
+  onChange: (status: TaskFilter) => void
 }
 
-const FILTERS: { value: Filter; label: string }[] = [
+const FILTERS: { value: TaskFilter; label: string }[] = [
   { value: 'all', label: 'すべて' },
   { value: 'todo', label: 'Todo' },
   { value: 'in_progress', label: '進行中' },

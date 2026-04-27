@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { TaskResponse, TaskPriority } from '../types/task'
-import { updateTask } from '../api/taskApi'
+import { updateTask, getApiErrorMessage } from '../api/taskApi'
 
 interface Props {
   task: TaskResponse
@@ -16,7 +16,7 @@ export default function TaskDetailModal({ task, onClose, onUpdated }: Props) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!title.trim()) {
       setError('タイトルは必須です')
@@ -34,12 +34,7 @@ export default function TaskDetailModal({ task, onClose, onUpdated }: Props) {
       onUpdated(updated)
       onClose()
     } catch (err: unknown) {
-      console.error('updateTask error:', err)
-      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } }
-      const msg = axiosErr.response?.data?.error
-        ?? axiosErr.response?.data?.message
-        ?? 'タスクの更新に失敗しました'
-      setError(msg)
+      setError(getApiErrorMessage(err, 'タスクの更新に失敗しました'))
     } finally {
       setSubmitting(false)
     }
