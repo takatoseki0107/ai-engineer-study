@@ -19,10 +19,13 @@ const TOKEN_KEY = 'auth_token'
 const USERNAME_KEY = 'auth_username'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [auth, setAuth] = useState<AuthState>(() => ({
-    token: localStorage.getItem(TOKEN_KEY),
-    username: localStorage.getItem(USERNAME_KEY),
-  }))
+  const [auth, setAuth] = useState<AuthState>(() => {
+    const token = localStorage.getItem(TOKEN_KEY)
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    }
+    return { token, username: localStorage.getItem(USERNAME_KEY) }
+  })
 
   useEffect(() => {
     if (auth.token) {
