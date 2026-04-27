@@ -47,10 +47,11 @@ export default function TaskForm({ onClose, onCreated }: Props) {
       <h2 className="text-sm font-bold text-gray-800 mb-4">新規タスク</h2>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
+          <label htmlFor="new-title" className="block text-xs font-medium text-gray-600 mb-1">
             タイトル <span className="text-red-500">*</span>
           </label>
           <input
+            id="new-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -59,8 +60,9 @@ export default function TaskForm({ onClose, onCreated }: Props) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">説明</label>
+          <label htmlFor="new-description" className="block text-xs font-medium text-gray-600 mb-1">説明</label>
           <textarea
+            id="new-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
@@ -68,8 +70,9 @@ export default function TaskForm({ onClose, onCreated }: Props) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">優先度</label>
+          <label htmlFor="new-priority" className="block text-xs font-medium text-gray-600 mb-1">優先度</label>
           <select
+            id="new-priority"
             value={priority}
             onChange={(e) => setPriority(e.target.value as TaskPriority | '')}
             className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -81,8 +84,9 @@ export default function TaskForm({ onClose, onCreated }: Props) {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">期日</label>
+          <label htmlFor="new-due-date" className="block text-xs font-medium text-gray-600 mb-1">期日</label>
           <input
+            id="new-due-date"
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
