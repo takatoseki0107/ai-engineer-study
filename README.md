@@ -28,7 +28,7 @@
 | Vite | 8.0.10 |
 | Tailwind CSS | 4.2.4 |
 | Axios | 1.15.2 |
-| @hello-pangea/dnd | 17.0.0 |
+| @hello-pangea/dnd | 18.0.1 |
 
 ### インフラ
 
