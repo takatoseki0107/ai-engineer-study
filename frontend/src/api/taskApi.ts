@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { TaskResponse, TaskStatus, TaskCreateRequest, TaskUpdateRequest } from '../types/task'
+import api from './client'
 
 export function getApiErrorMessage(err: unknown, fallback: string): string {
   if (axios.isAxiosError(err)) {
@@ -8,8 +9,6 @@ export function getApiErrorMessage(err: unknown, fallback: string): string {
   }
   return fallback
 }
-
-const api = axios.create({ baseURL: '/api' })
 
 export async function fetchAllTasks(): Promise<TaskResponse[]> {
   const res = await api.get<TaskResponse[]>('/tasks')

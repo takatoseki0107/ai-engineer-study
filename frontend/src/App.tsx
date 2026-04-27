@@ -1,11 +1,17 @@
 import { useEffect, useState, useCallback } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import type { TaskResponse, TaskFilter } from './types/task'
 import { fetchAllTasks, fetchTasksByStatus } from './api/taskApi'
+import { useAuth } from './contexts/AuthContext'
 import FilterBar from './components/FilterBar'
 import Board from './components/Board'
 import TaskForm from './components/TaskForm'
+import ProtectedRoute from './components/ProtectedRoute'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 
-export default function App() {
+function BoardPage() {
+  const { username, logout } = useAuth()
   const [tasks, setTasks] = useState<TaskResponse[]>([])
   const [selectedStatus, setSelectedStatus] = useState<TaskFilter>('all')
   const [loading, setLoading] = useState(true)
@@ -48,8 +54,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-800">Task Management</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500">{username}</span>
+          <button
+            onClick={logout}
+            className="px-3 py-1.5 rounded text-sm text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            ログアウト
+          </button>
+        </div>
       </header>
 
       <main className="p-6 space-y-4">
@@ -78,8 +93,33 @@ export default function App() {
           <p className="text-sm text-red-600">{error}</p>
         )}
 
-        {!loading && !error && <Board tasks={tasks} onUpdated={handleUpdated} onReordered={handleReordered} onDeleted={handleDeleted} />}
+        {!loading && !error && (
+          <Board
+            tasks={tasks}
+            onUpdated={handleUpdated}
+            onReordered={handleReordered}
+            onDeleted={handleDeleted}
+          />
+        )}
       </main>
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <BoardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
