@@ -171,6 +171,7 @@ docker compose up -d
 | スキル名 | 説明 | SKILL.md |
 |----------|------|----------|
 | `start-servers` | バックエンド（:8080）とフロントエンド（:5173）の開発サーバーを起動する。ポート競合時は競合プロセスを停止してからデフォルトポートで起動する。 | [.claude/skills/start-servers/SKILL.md](.claude/skills/start-servers/SKILL.md) |
+| `quality-check` | フロントエンド（ESLint・型チェック）とバックエンド（Checkstyle・ビルド）の品質チェックを順番に実行し、エラーがあれば修正する。 | [.claude/skills/quality-check/SKILL.md](.claude/skills/quality-check/SKILL.md) |
 
 ---
 
