@@ -33,12 +33,23 @@
 | @hello-pangea/dnd | 18.0.1 |
 | react-router-dom | 7.x |
 
-### インフラ
+### インフラ（ローカル開発）
 
 | 技術 | バージョン |
 |------|-----------|
 | PostgreSQL | 16.13 |
 | Docker / Docker Compose | — |
+
+### インフラ（AWS 本番）
+
+| 技術 | 用途 |
+|------|------|
+| AWS EC2 (t2.micro) | アプリサーバー（Nginx + Spring Boot） |
+| AWS RDS PostgreSQL 16 (db.t3.micro) | データベース |
+| AWS VPC | ネットワーク分離 |
+| Terraform | インフラ構成管理 |
+
+詳細は [docs/infrastructure.md](docs/infrastructure.md) を参照。
 
 ---
 
@@ -82,7 +93,17 @@ TaskManagement/
 │       ├── contexts/         # AuthContext.tsx
 │       ├── pages/            # LoginPage, RegisterPage
 │       └── types/            # task.ts
-├── docker-compose.yml        # PostgreSQL 16
+├── terraform/                # Terraform インフラ構成
+│   ├── main.tf               # ルートモジュール（VPC・SG・EC2・RDS を組み合わせ）
+│   ├── variables.tf          # 入力変数定義
+│   ├── outputs.tf            # 出力値（EC2 IP・RDS エンドポイント等）
+│   ├── terraform.tfvars.example  # 変数設定サンプル
+│   └── modules/
+│       ├── vpc/              # VPC・サブネット・IGW・ルートテーブル
+│       ├── security_groups/  # EC2 用・RDS 用セキュリティグループ
+│       ├── ec2/              # EC2 インスタンス・user_data スクリプト
+│       └── rds/              # RDS インスタンス・DB サブネットグループ
+├── docker-compose.yml        # PostgreSQL 16（ローカル開発用）
 └── CLAUDE.md                 # Claude Code 作業ルール
 ```
 
