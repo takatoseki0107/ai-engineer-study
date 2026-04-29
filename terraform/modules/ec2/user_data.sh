@@ -13,8 +13,8 @@ dnf install -y nginx
 # Nginx の設定：フロントエンド静的配信 + Spring Boot へのリバースプロキシ
 cat > /etc/nginx/conf.d/taskmanagement.conf << 'NGINXEOF'
 server {
-    listen 80;
-    server_name _;
+    listen 80 default_server;
+    server_name "";
 
     # React SPA の静的ファイルを配信
     root /var/www/taskmanagement;

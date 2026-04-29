@@ -1,2 +1,8 @@
 backend_tmp/
 backend_tmp.zip
+
+# Terraform
+terraform/terraform.tfvars
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform/
