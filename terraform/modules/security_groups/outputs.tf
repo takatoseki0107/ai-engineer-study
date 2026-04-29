@@ -2,3 +2,8 @@ output "ec2_sg_id" {
   description = "EC2 セキュリティグループ ID"
   value       = aws_security_group.ec2.id
 }
+
+output "rds_sg_id" {
+  description = "RDS セキュリティグループ ID"
+  value       = aws_security_group.rds.id
+}

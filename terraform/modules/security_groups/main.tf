@@ -38,3 +38,31 @@ resource "aws_security_group" "ec2" {
     Name = "${var.project_name}-ec2-sg"
   }
 }
+
+# RDS 用 SG：EC2 セキュリティグループからの PostgreSQL（5432）のみ許可
+# パブリックアクセスは一切許可しない
+resource "aws_security_group" "rds" {
+  name        = "${var.project_name}-rds-sg"
+  description = "RDS: allow PostgreSQL(5432) from EC2 SG only"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2.id]
+    description     = "PostgreSQL from EC2 only"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound"
+  }
+
+  tags = {
+    Name = "${var.project_name}-rds-sg"
+  }
+}
