@@ -1,0 +1,12 @@
+# このファイルを terraform.tfvars にコピーして実際の値を入力してください
+# terraform.tfvars は .gitignore で Git 管理対象外になっています
+
+aws_region        = "ap-northeast-1"
+project_name      = "taskmanagement"
+db_username       = "taskuser"
+db_password       = "CHANGE_ME_STRONG_PASSWORD_HERE"
+jwt_secret        = "CHANGE_ME_256BIT_RANDOM_STRING_HERE"
+ec2_key_pair_name = "taskmanagement-prod"
+
+# 自分のグローバル IP を確認: curl ifconfig.me
+my_ip_cidr = "YOUR_GLOBAL_IP/32"
