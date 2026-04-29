@@ -30,3 +30,11 @@ module "ec2" {
   key_pair_name      = var.ec2_key_pair_name
   aws_region         = var.aws_region
 }
+
+module "rds" {
+  source             = "./modules/rds"
+  project_name       = var.project_name
+  subnet_ids         = module.vpc.private_subnet_ids
+  security_group_ids = [module.security_groups.rds_sg_id]
+  db_password        = var.db_password
+}

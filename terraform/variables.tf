@@ -25,3 +25,9 @@ variable "my_ip_cidr" {
   description = "SSH・HTTP を許可する自分の IP（例: 1.2.3.4/32）。curl ifconfig.me で確認できる"
   type        = string
 }
+
+variable "db_password" {
+  description = "RDS マスターパスワード（terraform.tfvars で設定し、git に含めない）"
+  type        = string
+  sensitive   = true
+}
